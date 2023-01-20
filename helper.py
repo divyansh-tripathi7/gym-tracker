@@ -18,122 +18,7 @@ def calculate_angle(a,b,c):
     return angle 
 
 
-def armCurl(results, counter, stage, image):
-
-            landmarks = results.pose_landmarks.landmark
-            
-            # Get coordinates
-            shoulder = [landmarks[mp_pose.PoseLandmark.LEFT_SHOULDER.value].x,landmarks[mp_pose.PoseLandmark.LEFT_SHOULDER.value].y]
-            elbow = [landmarks[mp_pose.PoseLandmark.LEFT_ELBOW.value].x,landmarks[mp_pose.PoseLandmark.LEFT_ELBOW.value].y]
-            wrist = [landmarks[mp_pose.PoseLandmark.LEFT_WRIST.value].x,landmarks[mp_pose.PoseLandmark.LEFT_WRIST.value].y]
-            
-            # Calculate angle
-            angle = calculate_angle(shoulder, elbow, wrist)
-            
-            # Visualize angle
-            cv2.putText(image, str(angle), 
-                           tuple(np.multiply(elbow, [640, 480]).astype(int)), 
-                           cv2.FONT_HERSHEY_SIMPLEX, 0.5, (255, 255, 255), 2, cv2.LINE_AA
-                                )
-            
-            # Curl counter logic
-            if angle > 160:
-                stage = "down"
-            if angle < 50 and stage =='down':
-                stage="up"
-                counter +=1
-                print(counter)
-
-def pushUps(results, counter, stage, image):
-
-            landmarks = results.pose_landmarks.landmark
-            
-            # Get coordinates
-            shoulder = [landmarks[mp_pose.PoseLandmark.LEFT_SHOULDER.value].x,landmarks[mp_pose.PoseLandmark.LEFT_SHOULDER.value].y]
-            elbow = [landmarks[mp_pose.PoseLandmark.LEFT_ELBOW.value].x,landmarks[mp_pose.PoseLandmark.LEFT_ELBOW.value].y]
-            wrist = [landmarks[mp_pose.PoseLandmark.LEFT_WRIST.value].x,landmarks[mp_pose.PoseLandmark.LEFT_WRIST.value].y]
-            
-            # Calculate angle
-            angle = calculate_angle(shoulder, elbow, wrist)
-            
-            # Visualize angle
-            cv2.putText(image, str(angle), 
-                           tuple(np.multiply(elbow, [640, 480]).astype(int)), 
-                           cv2.FONT_HERSHEY_SIMPLEX, 0.5, (255, 255, 255), 2, cv2.LINE_AA
-                                )
-            
-            # Curl counter logic
-            if angle > 160:
-                stage = "up"
-            if angle < 50 and stage =='up':
-                stage="down"
-                counter +=1
-                print(counter)
-
-def squat(results, counter, stage, image):
-
-            landmarks = results.pose_landmarks.landmark
-            
-            # Get coordinates
-            hipR = [landmarks[mp_pose.PoseLandmark.RIGHT_HIP.value].x,landmarks[mp_pose.PoseLandmark.RIGHT_HIP.value].y]
-            kneeR = [landmarks[mp_pose.PoseLandmark.RIGHT_KNEE.value].x,landmarks[mp_pose.PoseLandmark.RIGHT_KNEE.value].y]
-            ankleR = [landmarks[mp_pose.PoseLandmark.RIGHT_ANKLE.value].x,landmarks[mp_pose.PoseLandmark.RIGHT_ANKLE.value].y]
-            
-            # Calculate angle
-            angle = calculate_angle(hipR, kneeR, ankleR)
-            
-            # Visualize angle
-            cv2.putText(image, str(angle), 
-                           tuple(np.multiply(hipR, [640, 480]).astype(int)), 
-                           cv2.FONT_HERSHEY_SIMPLEX, 0.5, (255, 255, 255), 2, cv2.LINE_AA
-                                )
-            
-            # Curl counter logic
-            if angle > 160:
-                stage = "strt"
-            if angle < 90 and stage =='strt':
-                stage="bent"
-                counter +=1
-                print(counter)
-
-def crunches(results, counter, stage, image):
-
-            landmarks = results.pose_landmarks.landmark
-            
-            # Get coordinates
-            hipR = [landmarks[mp_pose.PoseLandmark.RIGHT_HIP.value].x,landmarks[mp_pose.PoseLandmark.RIGHT_HIP.value].y]
-            kneeR = [landmarks[mp_pose.PoseLandmark.RIGHT_KNEE.value].x,landmarks[mp_pose.PoseLandmark.RIGHT_KNEE.value].y]
-            ankleR = [landmarks[mp_pose.PoseLandmark.RIGHT_ANKLE.value].x,landmarks[mp_pose.PoseLandmark.RIGHT_ANKLE.value].y]
-            shouldR = [landmarks[mp_pose.PoseLandmark.RIGHT_SHOULDER.value].x,landmarks[mp_pose.PoseLandmark.RIGHT_SHOULDER.value].y]
-
-            # Calculate angle
-            angle1 = calculate_angle(hipR, kneeR, ankleR)
-            angle =  calculate_angle(shouldR, hipR, kneeR)
-            
-            # Visualize angle
-            cv2.putText(image, str(angle), 
-                           tuple(np.multiply(hipR, [640, 480]).astype(int)), 
-                           cv2.FONT_HERSHEY_SIMPLEX, 0.5, (255, 255, 255), 2, cv2.LINE_AA
-                                )
-            
-            # Curl counter logic
-            if angle1 < 90:
-                if angle > 100:
-                    stage = "lay"
-                if angle < 70 and stage =='lay':
-                    stage="crunch"
-                    counter +=1
-                    print(counter)
-
-
-
-
-
-
-# initiaSquat()
-
-
-def curls():
+def curls(aim):
     cap = cv2.VideoCapture(0)
 
     # Curl counter variables
@@ -212,16 +97,23 @@ def curls():
             
             cv2.imshow('Mediapipe Feed', image)
 
+            if counter == aim:
+                break 
+
             if cv2.waitKey(10) & 0xFF == ord('q'):
                 break
+
+        
 
         cap.release()
         cv2.destroyAllWindows()
 
+    # return counter 
+
 
 # curls()
 
-def squats():
+def squats(aim):
     cap = cv2.VideoCapture(0)
 
     # Curl counter variables
@@ -300,13 +192,18 @@ def squats():
             
             cv2.imshow('Mediapipe Feed', image)
 
+            if(counter == aim):
+                break
+
             if cv2.waitKey(10) & 0xFF == ord('q'):
                 break
 
         cap.release()
         cv2.destroyAllWindows()
 
-def crunches():
+    # return counter
+
+def crunches(aim):
     cap = cv2.VideoCapture(0)
 
     # Curl counter variables
@@ -388,13 +285,19 @@ def crunches():
             
             cv2.imshow('Mediapipe Feed', image)
 
+            if(counter == aim):
+                break
+            
+
             if cv2.waitKey(10) & 0xFF == ord('q'):
                 break
 
         cap.release()
         cv2.destroyAllWindows()
 
-def pushups():
+    # return counter 
+
+def pushups(aim):
     cap = cv2.VideoCapture(0)
 
     # Curl counter variables
@@ -472,6 +375,9 @@ def pushups():
                                     )               
             
             cv2.imshow('Mediapipe Feed', image)
+            if(counter == aim):
+                break
+            
 
             if cv2.waitKey(10) & 0xFF == ord('q'):
                 break
@@ -479,8 +385,6 @@ def pushups():
         cap.release()
         cv2.destroyAllWindows()
 
+    # return counter 
 
-# squats()
-# curls()
-# pushups()
-# crunches()
+
